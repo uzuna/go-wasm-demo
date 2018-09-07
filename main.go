@@ -9,10 +9,12 @@ import (
 	"time"
 
 	"github.com/fogleman/gg"
+	"github.com/uzuna/go-wasm/goth"
 )
 
 func main() {
 	fmt.Println("Hello wasm")
+	content := js.Global().Get("document").Call("getElementById", "content")
 
 	{
 		var cb js.Callback
@@ -23,7 +25,12 @@ func main() {
 			// callbackを閉じる。 once
 			cb.Release()
 		})
-		js.Global().Get("document").Call("getElementById", "myButton").Call("addEventListener", "click", cb)
+		button := goth.CreateElement("button")
+		goth.SetAttribute(button, "id", "myButton")
+		button.Set("innerHTML", "Go Callback Test")
+		goth.AddEventListener(button, "click", cb)
+		goth.AppendChild(content, button)
+		// js.Global().Get("document").Call("getElementById", "myButton").Call("addEventListener", "click", cb)
 	}
 
 	{
@@ -42,19 +49,23 @@ func main() {
 			*/
 
 			// get content
-			content := js.Global().Get("document").Call("getElementById", "content")
 
 			// create div
-			div := js.Global().Get("document").Call("createElement", "div")
+			div := goth.CreateElement("div")
 			div.Set("textContent", "new row")
 
 			// append child
-			content.Call("appendChild", div)
+			goth.AppendChild(content, div)
 
 			// Releaseしていないのでclickのたびに実行する
 			// cb.Release()
 		})
-		js.Global().Get("document").Call("getElementById", "createDiv").Call("addEventListener", "click", cb)
+		button := goth.CreateElement("button")
+		goth.SetAttribute(button, "id", "createDiv")
+		button.Set("innerHTML", "Go Create DOM")
+		goth.AddEventListener(button, "click", cb)
+		goth.AppendChild(content, button)
+		// js.Global().Get("document").Call("getElementById", "createDiv").Call("addEventListener", "click", cb)
 	}
 
 	// fmt.Println(js.Global().Get("document").Call("getElementById", "myButton").Get("InnerHTML").String())
