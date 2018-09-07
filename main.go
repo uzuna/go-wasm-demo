@@ -15,7 +15,7 @@ import (
 func main() {
 	fmt.Println("Hello wasm")
 	content := js.Global().Get("document").Call("getElementById", "content")
-
+	cnode := goth.NewNode(content)
 	{
 		var cb js.Callback
 
@@ -25,11 +25,11 @@ func main() {
 			// callbackを閉じる。 once
 			cb.Release()
 		})
-		button := goth.CreateElement("button")
-		goth.SetAttribute(button, "id", "myButton")
-		button.Set("innerHTML", "Go Callback Test")
-		goth.AddEventListener(button, "click", cb)
-		goth.AppendChild(content, button)
+		button := goth.CreateElementNode("button").
+			SetAttribute("id", "myButton").
+			Set("innerHTML", "Go Callback Test").
+			AddEventListener("click", cb)
+		goth.AppendChildNode(cnode, button)
 		// js.Global().Get("document").Call("getElementById", "myButton").Call("addEventListener", "click", cb)
 	}
 
