@@ -3,24 +3,14 @@ package goth
 import "syscall/js"
 
 // CreateElement is dom ctrl CreateElement
-func CreateElement(tagName string) js.Value {
-	return js.Global().Get("document").Call("createElement", tagName)
-}
-
-// CreateElement is dom ctrl CreateElement
-func CreateElementNode(tagName string) Node {
+func CreateElement(tagName string) Node {
 	return Node{
 		jsv: js.Global().Get("document").Call("createElement", tagName),
 	}
 }
 
-// AppendChild is dom ctrl AppendChild
-func AppendChild(node js.Value, child js.Value) {
-	node.Call("appendChild", child)
-}
-
 // AppendChildNode is dom ctrl AppendChildNode
-func AppendChildNode(node Node, child Node) {
+func AppendChild(node Node, child Node) {
 	node.jsv.Call("appendChild", child.jsv)
 }
 
@@ -64,5 +54,10 @@ func (n Node) SetAttribute(name, value string) Node {
 
 func (n Node) AddEventListener(event string, cb js.Callback) Node {
 	AddEventListener(n.jsv, event, cb)
+	return n
+}
+
+func (n Node) AppendChild(child Node) Node {
+	AppendChild(n, child)
 	return n
 }

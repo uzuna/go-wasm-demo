@@ -28,11 +28,11 @@ func main() {
 			// callbackを閉じる。 once
 			cb.Release()
 		})
-		button := goth.CreateElementNode("button").
+		button := goth.CreateElement("button").
 			SetAttribute("id", "myButton").
 			Set("innerHTML", "Go Callback Test").
 			AddEventListener("click", cb)
-		goth.AppendChildNode(cnode, button)
+		goth.AppendChild(cnode, button)
 		// js.Global().Get("document").Call("getElementById", "myButton").Call("addEventListener", "click", cb)
 	}
 
@@ -58,16 +58,16 @@ func main() {
 			div.Set("textContent", "new row")
 
 			// append child
-			goth.AppendChild(content, div)
+			goth.AppendChild(cnode, div)
 
 			// Releaseしていないのでclickのたびに実行する
 			// cb.Release()
 		})
-		button := goth.CreateElement("button")
-		goth.SetAttribute(button, "id", "createDiv")
-		button.Set("innerHTML", "Go Create DOM")
-		goth.AddEventListener(button, "click", cb)
-		goth.AppendChild(content, button)
+		button := goth.CreateElement("button").
+			SetAttribute("id", "createDiv").
+			Set("innerHTML", "Go Create DOM").
+			AddEventListener("click", cb)
+		goth.AppendChild(cnode, button)
 		// js.Global().Get("document").Call("getElementById", "createDiv").Call("addEventListener", "click", cb)
 	}
 
@@ -92,15 +92,43 @@ func main() {
 	// reference https://matthewphillips.info/programming/wasm-golang-ce.html
 	{
 		init := js.NewCallback(func(i []js.Value) {
-			element := i[0]
-			element.Set("innerHTML", "Hello world!")
-			fmt.Println("format ppp", element)
+			el := goth.NewNode(i[0])
+
+			// layout
+			form := goth.CreateElement("form")
+			el.AppendChild(form)
+			fieldset := goth.CreateElement("fieldset")
+			form.AppendChild(fieldset)
+
+			// view
+			label := goth.CreateElement("label").
+				SetAttribute("for", "title").
+				Set("innerHTML", "UserName")
+			fieldset.AppendChild(label)
+
+			inputText := goth.CreateElement("input").
+				SetAttribute("type", "text").
+				SetAttribute("id", "title")
+			fieldset.AppendChild(inputText)
+
+			// event
+
+			cb := js.NewEventCallback(js.PreventDefault, func(event js.Value) {
+				fmt.Println("CallBack", event)
+			})
+
+			submit := goth.CreateElement("button").
+				Set("innerHTML", "Submit")
+			fieldset.AppendChild(submit)
+
+			form.AddEventListener("submit", cb)
+
 		})
 
 		js.Global().Call("makeComponent", "hello-world", init)
 
-		hw := goth.CreateElementNode("hello-world")
-		goth.AppendChildNode(cnode, hw)
+		hw := goth.CreateElement("hello-world")
+		goth.AppendChild(cnode, hw)
 	}
 
 	// png rendering
@@ -120,7 +148,7 @@ func main() {
 	<-forever
 }
 
-// Generate png format by Base64
+// Render is generate png format by Base64
 func Render() string {
 	buf := new(bytes.Buffer)
 
