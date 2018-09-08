@@ -29,6 +29,8 @@ license that can be found in the LICENSE file.
 			document.getElementById("runButton").disabled = false;
 		}).catch((err) => {
 			console.error(err);
+		}).then(()=>{
+			run()
 		});
 
 		async function run() {
@@ -36,6 +38,19 @@ license that can be found in the LICENSE file.
 			await go.run(inst);
 			inst = await WebAssembly.instantiate(mod, go.importObject); // reset instance
 		}
+
+		// Make Web component call from go
+		makeComponent = function (name, init) {
+				const Element = class extends HTMLElement {
+					constructor() {
+						super();
+						init(this);
+					}
+				};
+
+				customElements.define(name, Element);
+		};
+
 	</script>
 
 	<button onClick="run();" id="runButton" disabled>Run</button>

@@ -12,6 +12,9 @@ import (
 	"github.com/uzuna/go-wasm/goth"
 )
 
+type Layout struct {
+}
+
 func main() {
 	fmt.Println("Hello wasm")
 	content := js.Global().Get("document").Call("getElementById", "content")
@@ -84,15 +87,21 @@ func main() {
 			counter++
 		}
 	}()
-	// for {
-	// 	time.Sleep(time.Second)
-	// 	fmt.Println(fmt.Sprintf("Hello wasm outer loop At: %d", counter))
-	// 	if counter > 10 {
-	// 		fmt.Println("break outer loop")
-	// 		break
-	// 	}
-	// 	counter++
-	// }
+
+	// webcomponent
+	// reference https://matthewphillips.info/programming/wasm-golang-ce.html
+	{
+		init := js.NewCallback(func(i []js.Value) {
+			element := i[0]
+			element.Set("innerHTML", "Hello world!")
+			fmt.Println("format ppp", element)
+		})
+
+		js.Global().Call("makeComponent", "hello-world", init)
+
+		hw := goth.CreateElementNode("hello-world")
+		goth.AppendChildNode(cnode, hw)
+	}
 
 	// png rendering
 	{
@@ -111,7 +120,7 @@ func main() {
 	<-forever
 }
 
-// base 64 pngの生成
+// Generate png format by Base64
 func Render() string {
 	buf := new(bytes.Buffer)
 
