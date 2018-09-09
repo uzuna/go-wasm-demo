@@ -13,6 +13,7 @@ import (
 )
 
 type Layout struct {
+	root goth.Node
 }
 
 func main() {
@@ -93,6 +94,11 @@ func main() {
 	{
 		init := js.NewCallback(func(i []js.Value) {
 			el := goth.NewNode(i[0])
+			// el.AttachShadow()
+
+			// shadowroot
+			shr := el.CreateShadowRoot()
+			shr.Set("innerHTML", `<style>h3{ color: red; }</style><h3>Shadow DOM</h3>`)
 
 			// layout
 			form := goth.CreateElement("form")

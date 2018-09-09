@@ -57,6 +57,17 @@ func (n Node) AddEventListener(event string, cb js.Callback) Node {
 	return n
 }
 
+func (n Node) AttachShadow() Node {
+	obj := make(map[string]interface{})
+	obj["mode"] = "open"
+	n.jsv.Call("attachShadow", js.ValueOf(obj))
+	return n
+}
+
+func (n Node) CreateShadowRoot() Node {
+	return Node{jsv: n.jsv.Call("createShadowRoot")}
+}
+
 func (n Node) AppendChild(child Node) Node {
 	AppendChild(n, child)
 	return n
