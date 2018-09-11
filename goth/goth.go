@@ -47,6 +47,10 @@ func (n Node) Set(prop, value string) Node {
 	return n
 }
 
+func (n Node) Get(prop string) js.Value {
+	return n.jsv.Get(prop)
+}
+
 func (n Node) SetAttribute(name, value string) Node {
 	SetAttribute(n.jsv, name, value)
 	return n
